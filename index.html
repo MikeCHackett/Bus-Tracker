@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
+    <link href="style.css" rel="stylesheet"/>
+    <title>Map Animation</title>
+</head>
+<body>
+
+
+    <div id='map' style='width: screen; height: screen;'></div>
+    <div class="map-overlay top">
+        <button style="font-size: 2em;" onclick="move()">
+            Show stops between UT and USF
+        </button>
+        <button style="font-size: 2em;" onclick="refreshPage()">Refresh Page</button>
+
+    </div>
+    <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoibWNoYWNrZXR0OTYiLCJhIjoiY2t0b3pmcXZ3MGd3bzJ2cDNlMWRjb3JhNyJ9.FyEsgAUewb38EELqzfIvRQ';
+    var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v12',
+    center: [-82.46729385684424,27.94701145150786],
+    zoom: 11.5
+    });
+
+
+
+    map.on('load', () => {
+map.addSource('route', {
+'type': 'geojson',
+'data': {
+'type': 'Feature',
+'properties': {},
+'geometry': {
+'type': 'LineString',
+'coordinates': [
+    [-82.46729385684424,27.94701145150786],
+    [-82.47300159764801,27.944585144837628],
+    [-82.4587107879664,27.955124018567084],
+    [-82.42741881951828, 28.065620487833545],
+    [-82.41398631672446, 28.05869025578883],
+]
+}
+}
+});
+map.addLayer({
+'id': 'route',
+'type': 'line',
+'source': 'route',
+'layout': {
+'line-join': 'round',
+'line-cap': 'round'
+},
+'paint': {
+'line-color': '#000000',
+'line-width': 3
+}
+});
+});
+// Create a new marker.
+
+const busStops = [
+    [-82.46729385684424,27.94701145150786],
+    [-82.47300159764801,27.944585144837628],
+    [-82.4587107879664,27.955124018567084],
+    [-82.42741881951828, 28.065620487833545],
+    [-82.41398631672446, 28.05869025578883],
+]
+
+
+
+const marker = new mapboxgl.Marker({
+  color: "#097969",
+  draggable: true
+})
+  .setLngLat(busStops[0])
+  .addTo(map);
+
+  let counter = 0;
+  const stopCounting = busStops.length;
+
+  function move() {
+    setInterval(()=> {
+       if (counter === stopCounting) {
+        return
+       }
+       marker.setLngLat(busStops[counter]);
+       counter = counter + 1;
+    } , 1000);
+  }
+    if (typeof module !== 'undefined') {
+      module.exports = { move };
+    }
+
+
+    function refreshPage() {
+  window.location.reload(true);
+}
+
+
+</script>
+
+</body>
+</html>
